@@ -22,6 +22,7 @@ client = PayBot()
 
 @client.tree.command(name="pay", description="Process a payment")
 @app_commands.describe(method="The payment method to use")
+<<<<<<< Updated upstream
 async def pay(interaction: discord.Interaction, method: str):
     await interaction.response.send_message(f"Processing payment using {method}...")
 
@@ -29,6 +30,13 @@ async def pay(interaction: discord.Interaction, method: str):
     if not method.isdigit():
         await interaction.followup.send("Invalid phone number. Please enter a valid Thai phone number.")
         return
+=======
+async def pay(interaction: discord.Interaction, phonenumber: str):
+    await interaction.response.send_message(f"Processing payment using {phonenumber}...")
+
+    phone_number = phonenumber
+    qr_data = f'https://promptpay.io/{phone_number}'
+>>>>>>> Stashed changes
 
     # สร้างข้อมูลสำหรับ QR Code (ปรับตามรูปแบบของ Thai QR)
     phone_number = method

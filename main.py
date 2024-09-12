@@ -3,7 +3,6 @@ from discord import app_commands
 from dotenv import load_dotenv
 import os
 from io import BytesIO
-from promptpay import qrcode
 
 load_dotenv()
 bottoken = os.getenv('bot')
@@ -13,14 +12,12 @@ class PayBot(discord.Client):
         super().__init__(intents=discord.Intents.default())
         self.tree = app_commands.CommandTree(self)
 
-    async def setup_hook(self):
+    async def on_ready(self):
+        print(f'Logged in as {self.user} (ID: {self.user.id})')
         await self.tree.sync()
 
 client = PayBot()
 
-import discord
-import qrcode
-from io import BytesIO
 
 @client.tree.command(name="pay", description="Process a payment")
 @app_commands.describe(method="The payment method to use")
