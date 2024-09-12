@@ -1,10 +1,8 @@
 import discord
 from discord import app_commands
+from discord.ui import Button, View
 from dotenv import load_dotenv
 import os
-from io import BytesIO
-import qrcode
-from promptpay import qrcode
 
 load_dotenv()
 bottoken = os.getenv('bot')
@@ -18,44 +16,35 @@ class PayBot(discord.Client):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         await self.tree.sync()
 
+    async def pay_interaction(self, interaction: discord.Interaction, method: str):
+        await interaction.response.send_message(f"Processing payment using {method}...")
+        
+        view = View(timeout=None)
+        confirm_button = Button(label="Confirm Payment", style=discord.ButtonStyle.green)
+        cancel_button = Button(label="Cancel", style=discord.ButtonStyle.red)
+        
+        async def confirm_payment(button_interaction: discord.Interaction):
+            phone_number = method
+            qr_data = f'https://promptpay.io/{phone_number}'
+            await button_interaction.response.send_message(f"Sending QR code to you privately...")
+            await button_interaction.user.send(qr_data)
+        
+        async def cancel_payment(button_interaction: discord.Interaction):
+            await button_interaction.response.send_message("Payment cancelled.")
+        
+        confirm_button.callback = confirm_payment
+        cancel_button.callback = cancel_payment
+        view.add_item(confirm_button)
+        view.add_item(cancel_button)
+        
+        await interaction.followup.send("Confirm or cancel payment:", view=view)
+
+intents = discord.Intents.default()
 client = PayBot()
 
 @client.tree.command(name="pay", description="Process a payment")
-@app_commands.describe(method="The payment method to use")
-<<<<<<< Updated upstream
+@app_commands.describe(method="The payment method to use (e.g., phone number)")
 async def pay(interaction: discord.Interaction, method: str):
-    await interaction.response.send_message(f"Processing payment using {method}...")
-
-    # Validate phone number format (assuming phone number as method)
-    if not method.isdigit():
-        await interaction.followup.send("Invalid phone number. Please enter a valid Thai phone number.")
-        return
-=======
-async def pay(interaction: discord.Interaction, phonenumber: str):
-    await interaction.response.send_message(f"Processing payment using {phonenumber}...")
-
-    phone_number = phonenumber
-    qr_data = f'https://promptpay.io/{phone_number}'
->>>>>>> Stashed changes
-
-    # สร้างข้อมูลสำหรับ QR Code (ปรับตามรูปแบบของ Thai QR)
-    phone_number = method
-    amount = "100.00"
-    other_details = "สินค้า A, บิลเลขที่ B"
-    qr_data = f"PaymentID={phone_number}&Amount={amount}&OtherDetails={other_details}"
-
-    # สร้าง QR Code using standard qrcode library
-    qr = qrcode.QRCode(version=1, error_correction=qrcode.constants.ERROR_CORRECT_L, box_size=10)
-    qr.add_data(method)
-    qr.make(fit=True)
-
-    # สร้างภาพ QR Code และแปลงเป็นไฟล์
-    img = qrcode.to_image(method)
-    buffer = BytesIO()
-    img.save(buffer, 'PNG')
-    buffer.seek(0)
-
-    # ส่งไฟล์ QR Code ผ่าน DM
-    await interaction.user.send(file=discord.File(buffer, 'qr_code.png'))
+    await client.pay_interaction(interaction, method)
 
 client.run(bottoken)
