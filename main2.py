@@ -2,14 +2,12 @@ import discord
 from discord import app_commands
 from dotenv import load_dotenv
 import os
-<<<<<<< Updated upstream
 from io import BytesIO
 import qrcode
-=======
 from datetime import datetime
 from discord import app_commands, utils
 from discord.ext import commands
->>>>>>> Stashed changes
+
 
 load_dotenv()
 bottoken = os.getenv('bot')
@@ -139,22 +137,13 @@ async def on_app_command_error(interaction: discord.Interaction, error: app_comm
         raise error
 
 @client.tree.command(name="pay", description="Process a payment")
-<<<<<<< Updated upstream
 @app_commands.describe(method="The payment method to use")
 async def pay(interaction: discord.Interaction, phonenumber: str):
-    await interaction.response.send_message(f"Processing payment using {phonenumber}... Amount {amount}")
+    await interaction.response.send_message(f"Processing payment using {phonenumber}...")
 
     phone_number = phonenumber
-    total = amount
-    qr_data = f'https://promptpay.io/{phone_number}/{amount}'
+    qr_data = f'https://promptpay.io/{phone_number}'
 
     await interaction.user.send_message(qr_data)
    
-=======
-@app_commands.guilds(discord.Object(id=guild_id))
-@app_commands.describe(method="The payment method to use (e.g., phone number)")
-async def pay(interaction: discord.Interaction, method: str):
-    await client.pay_interaction(interaction, method)
->>>>>>> Stashed changes
-
 client.run(bottoken)
