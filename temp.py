@@ -19,6 +19,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 async def on_ready():
     print(f'Logged in as {bot.user}')
 
+
 # ฟังก์ชันสร้างห้องสำหรับ Ticket
 async def create_ticket_channel(interaction):
     guild = interaction.guild

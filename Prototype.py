@@ -142,7 +142,7 @@ class main(discord.ui.View):
             f.write(f"\n*Generated at {generated} by {client.user}*\n*Date Formatting: MM/DD/YY*\n*Time Zone: UTC*")
         
         with open(f"{interaction.channel.id}.md", 'rb') as f:
-            await interaction.followup.send(file=discord.File(f, f"{interaction.channel.name}.md"), ephemeral=True)
+            await interaction.followup.send(file=discord.File(f, f"{interaction.channel.name}.md"), ephemeral=False)
         
         os.remove(f"{interaction.channel.id}.md")
 
